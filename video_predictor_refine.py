@@ -50,7 +50,6 @@ predictor = build_sam2_video_predictor(model_cfg, sam2_checkpoint)
 
 # In[29]:
 refine_clip_id = 3
-
 ann_frame_idx = 75  # the frame index we interact with
 ann_obj_id = 1  # give a unique id to each object we interact with (it can be any integers)
 # refine_frame_idx = 29  # further refine some details on this frame
