@@ -111,12 +111,15 @@ def merge_and_save_masks(masks, save_path):
 # ```
 # where `-q:v` generates high-quality JPEG frames and `-start_number 0` asks ffmpeg to start the JPEG file from `00000.jpg`.
 
-# In[30]:
-
-
+def extract_clip_id(file_name):
+    return int(file_name.split('_')[-1])
 # So the list is the clip video we want to process, and the video_dir is the directory of the video!
-lists = range(0, 1)
-video_dirs = [f"./rebuttal_data_source/ur5_img_and_language/berkeley_autolab_ur5_traj_{i}" for i in lists]
+lists = range(0, 5)
+root_path = "./rebuttal_data_source/ur5_img_and_language/"
+mask_path = "./rebuttal_data_source/ur5_img_and_language_masks/"
+# sorted based on the number of the clip id
+video_dirs = [os.path.join(root_path, sorted(os.listdir(root_path), key=extract_clip_id)[i]) for i in lists]
+
 image_lists = []
 for video_dir in video_dirs:
     # scan all the JPEG frame names in this directory
@@ -316,13 +319,13 @@ for out_frame_idx in range(0, len(video_dir), 1):
         show_mask(out_mask, plt.gca(), obj_id=out_obj_id)
         masks[out_obj_id] = out_mask
     
-    save_path = os.path.join(video_dir[out_frame_idx].replace('ur5_img_and_language', 'ur5_img_and_language_masks'))
+    save_path = os.path.join(mask_path, video_dir[out_frame_idx].split('/')[-2])
     # Save the merged mask
-    if not os.path.exists(video_dir[out_frame_idx].replace('ur5_img_and_language', 'ur5_img_and_language_masks').rsplit('/', 1)[0]):
-        os.makedirs(video_dir[out_frame_idx].replace('ur5_img_and_language', 'ur5_img_and_language_masks').rsplit('/', 1)[0])
-    
-    print(save_path)
-    merge_and_save_masks(masks, save_path)
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    save_image_path = os.path.join(save_path, video_dir[out_frame_idx].split('/')[-1])
+    print(save_image_path)
+    merge_and_save_masks(masks, save_image_path)
 
 
 # render the segmentation results every few frames
